@@ -31,10 +31,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const { user } = useAuth();
 
-  // Navigation items: Data Recovery is available to ALL users
+  // Navigation items: Data is FIRST (1st), Dashboard is SECOND (2nd)
   const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'data', label: 'Data', icon: Database },
+    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'recovery', label: 'Data Recovery', icon: HardDriveDownload },
     ...(user?.isAdmin ? [
       { 
@@ -113,7 +113,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
         </div>
 
-        {/* Navigation Menu */}
+        {/* Navigation Menu (Data 1st, Dashboard 2nd) */}
         <div className="flex-1 px-3 py-2 space-y-1 overflow-y-auto">
           <div className="px-3 py-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
             Menu
