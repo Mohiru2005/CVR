@@ -1,0 +1,39 @@
+{
+  "exportedAt": "2026-08-20T18:11:33.409Z",
+  "totalPayments": 3,
+  "payments": [
+    {
+      "id": "cmt1u12ff0002sd1z6b5mfwvq",
+      "date": "2026-08-20",
+      "senderName": "Admin",
+      "amount": 90000,
+      "targetBank": "State Bank of India (SBI)",
+      "notes": null,
+      "createdByName": "Admin",
+      "createdAt": "2026-08-20T18:06:42.316Z",
+      "updatedAt": "2026-08-20T18:06:42.316Z"
+    },
+    {
+      "id": "cmt1thx930008wf6tlpitilxv",
+      "date": "2026-08-20",
+      "senderName": "Admin",
+      "amount": 400,
+      "targetBank": "Canara Bank",
+      "notes": null,
+      "createdByName": "Admin",
+      "createdAt": "2026-08-20T17:51:49.143Z",
+      "updatedAt": "2026-08-20T17:51:49.143Z"
+    },
+    {
+      "id": "cmt1thv320007wf6t8s8ea109",
+      "date": "2026-08-20",
+      "senderName": "Admin",
+      "amount": 400,
+      "targetBank": "Canara Bank",
+      "notes": null,
+      "createdByName": "Admin",
+      "createdAt": "2026-08-20T17:51:46.334Z",
+      "updatedAt": "2026-08-20T17:51:46.334Z"
+    }
+  ]
+}

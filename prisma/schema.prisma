@@ -1,0 +1,42 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String   @unique
+  passwordHash String
+  isAdmin      Boolean  @default(false)
+  role         String   @default("User")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Payment {
+  id             String          @id @default(cuid())
+  date           String          // YYYY-MM-DD format
+  senderName     String
+  amount         Float
+  targetBank     String
+  notes          String?
+  createdByName  String
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  deleteRequests DeleteRequest[]
+}
+
+model DeleteRequest {
+  id            String   @id @default(cuid())
+  paymentId     String
+  requestedBy   String
+  reason        String?
+  status        String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  payment       Payment  @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+}
