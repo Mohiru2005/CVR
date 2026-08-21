@@ -18,7 +18,7 @@ export async function POST(request: Request) {
 
     const trimmedName = name.trim();
 
-    // 1. Dedicated Master Admin Authentication
+    // 1. Master Admin hardcoded authentication
     if (trimmedName.toLowerCase() === 'admin' && password === 'Pavanpesala@2005') {
       const adminUser = {
         id: 'admin_master',
@@ -33,18 +33,12 @@ export async function POST(request: Request) {
         isAdmin: true,
       });
 
-      return NextResponse.json({
-        success: true,
-        user: adminUser,
-        token,
-      });
+      return NextResponse.json({ success: true, user: adminUser, token });
     }
 
-    // 2. Database User Lookup
+    // 2. Database user lookup
     const user = await prisma.user.findUnique({
-      where: {
-        name: trimmedName,
-      },
+      where: { name: trimmedName },
     });
 
     if (!user) {
@@ -54,6 +48,19 @@ export async function POST(request: Request) {
       );
     }
 
+    // 3. Block login if user is still PENDING admin approval
+    if (user.status === 'PENDING') {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Your account is pending approval by Admin. Please wait.',
+          pending: true,
+        },
+        { status: 403 }
+      );
+    }
+
+    // 4. Verify password
     const isMatch = await comparePassword(password, user.passwordHash);
     if (!isMatch) {
       return NextResponse.json(
@@ -75,11 +82,7 @@ export async function POST(request: Request) {
       isAdmin: user.isAdmin,
     });
 
-    return NextResponse.json({
-      success: true,
-      user: userPayload,
-      token,
-    });
+    return NextResponse.json({ success: true, user: userPayload, token });
   } catch (error) {
     console.error('Login error:', error);
     return NextResponse.json(

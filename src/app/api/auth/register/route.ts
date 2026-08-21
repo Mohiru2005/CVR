@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { hashPassword, signJwt } from '@/lib/auth';
+import { hashPassword } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -32,11 +32,9 @@ export async function POST(request: Request) {
       );
     }
 
-    // Check if user already exists
+    // Check if username already exists
     const existingUser = await prisma.user.findUnique({
-      where: {
-        name: trimmedName,
-      },
+      where: { name: trimmedName },
     });
 
     if (existingUser) {
@@ -46,35 +44,24 @@ export async function POST(request: Request) {
       );
     }
 
-    // Hash password and store in database
     const passwordHash = await hashPassword(password);
 
-    const newUser = await prisma.user.create({
+    // Create user with PENDING status — Admin must approve before they can login
+    await prisma.user.create({
       data: {
         name: trimmedName,
         passwordHash,
         isAdmin: false,
         role: 'User',
+        status: 'PENDING',
       },
     });
 
-    const userPayload = {
-      id: newUser.id,
-      name: newUser.name,
-      isAdmin: newUser.isAdmin,
-      lastLogin: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-    };
-
-    const token = signJwt({
-      id: newUser.id,
-      name: newUser.name,
-      isAdmin: newUser.isAdmin,
-    });
-
+    // Return pending status — no JWT token issued yet
     return NextResponse.json({
       success: true,
-      user: userPayload,
-      token,
+      pending: true,
+      message: 'Registration request sent to Admin. Please wait for approval.',
     });
   } catch (error) {
     console.error('Registration error:', error);

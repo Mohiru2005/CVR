@@ -84,9 +84,38 @@ export default function Home() {
 
   const [isAddPaymentOpen, setIsAddPaymentOpen] = useState<boolean>(false);
 
+  // Dark Mode
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
+
+  // Focus Mode (hide sidebar, full-width table)
+  const [isFocusMode, setIsFocusMode] = useState<boolean>(false);
+
+  // Local search (filters already-loaded payments, no API call)
+  const [localSearch, setLocalSearch] = useState<string>('');
+
+  // Today's date string for row highlighting
+  const todayStr = new Date().toISOString().split('T')[0];
+
   useEffect(() => {
     setMounted(true);
+    // Restore dark mode preference from localStorage
+    const saved = localStorage.getItem('cvr_dark_mode');
+    if (saved === 'true') {
+      setIsDarkMode(true);
+      document.documentElement.classList.add('dark');
+    }
   }, []);
+
+  // Apply dark mode class to <html> whenever it changes
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('cvr_dark_mode', 'true');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('cvr_dark_mode', 'false');
+    }
+  }, [isDarkMode]);
 
   // Always reset active tab to 'data' upon login
   useEffect(() => {
@@ -241,6 +270,9 @@ export default function Home() {
     if (user?.isAdmin && activeTab === 'users') {
       fetchUsers();
     }
+    if (user?.isAdmin && activeTab === 'dashboard') {
+      fetchUsers(); // load pending registrations for dashboard card
+    }
     if (activeTab === 'recovery') {
       fetchBackups();
     }
@@ -257,6 +289,16 @@ export default function Home() {
   };
 
   const isFilterActive = Boolean(searchName || fromDate || toDate || (selectedBankFilter && selectedBankFilter !== 'ALL'));
+
+  // Local search filter — runs on already-loaded data, zero API calls
+  const displayPayments = localSearch.trim()
+    ? payments.filter((p) =>
+        p.senderName?.toLowerCase().includes(localSearch.toLowerCase()) ||
+        p.remarks?.toLowerCase().includes(localSearch.toLowerCase()) ||
+        p.targetBank?.toLowerCase().includes(localSearch.toLowerCase()) ||
+        String(p.amount).includes(localSearch)
+      )
+    : payments;
 
   // Admin Direct Delete
   const handleAdminDirectDelete = async (paymentId: string) => {
@@ -363,6 +405,36 @@ export default function Home() {
     }
   };
 
+  // Admin: Approve or Reject a pending user registration
+  const handleApproveUser = async (userId: string, userName: string, action: 'APPROVE' | 'REJECT') => {
+    if (!user?.isAdmin) return;
+    const confirmMsg = action === 'APPROVE'
+      ? `Approve registration for "${userName}"? They will be able to login.`
+      : `Reject registration for "${userName}"? Their account will be deleted.`;
+
+    if (confirm(confirmMsg)) {
+      try {
+        const token = localStorage.getItem('cvr_auth_token') || user?.token;
+        const res = await fetch('/api/users', {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ userId, action }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          fetchUsers();
+        } else {
+          alert(data.error || 'Failed to process request');
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  };
+
   // Export to 100% Genuine Binary Excel (.xlsx) file with DD/MM/YYYY date format
   const handleExportExcel = () => {
     if (payments.length === 0) {
@@ -376,6 +448,7 @@ export default function Home() {
       'Sender / User Name': p.senderName || user?.name || '',
       'Amount (INR)': Number(p.amount || 0),
       'Bank to be Delivered': p.targetBank || '',
+      'Remarks': p.remarks || '',
       'Recorded By': p.createdByName || '',
     }));
 
@@ -387,6 +460,7 @@ export default function Home() {
       'Sender / User Name': 'Total Collection',
       'Amount (INR)': totalAmt,
       'Bank to be Delivered': '',
+      'Remarks': '',
       'Recorded By': '',
     });
 
@@ -399,6 +473,7 @@ export default function Home() {
       { wch: 26 }, // Sender Name
       { wch: 18 }, // Amount (INR)
       { wch: 32 }, // Bank to be Delivered
+      { wch: 30 }, // Remarks
       { wch: 22 }, // Recorded By
     ];
 
@@ -428,18 +503,20 @@ export default function Home() {
     <div className="min-h-screen bg-[#f8fafc]">
       {user ? (
         /* LOGGED IN LAYOUT WITH LEFT SIDEBAR */
-        <div className="min-h-screen flex">
+        <div className={`min-h-screen flex ${isFocusMode ? 'focus-mode-active' : ''}`}>
           {/* Left Sidebar */}
-          <Sidebar
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            isOpen={sidebarOpen}
-            onClose={() => setSidebarOpen(false)}
-            pendingRequestsCount={deleteRequests.length}
-          />
+          <div className="sidebar-panel">
+            <Sidebar
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              isOpen={sidebarOpen}
+              onClose={() => setSidebarOpen(false)}
+              pendingRequestsCount={deleteRequests.length}
+            />
+          </div>
 
           {/* Main Workspace Area */}
-          <div className="flex-1 lg:pl-72 flex flex-col min-h-screen">
+          <div className={`flex-1 flex flex-col min-h-screen ${isFocusMode ? '' : 'lg:pl-72'}`}>
             {/* Top Bar with Top-Right Logout */}
             <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/80 px-4 sm:px-6 h-16 flex items-center justify-between">
               {/* Left Title & Mobile Menu Toggle */}
@@ -486,6 +563,30 @@ export default function Home() {
                     {user.name}
                   </span>
                 </div>
+
+                {/* Dark Mode Toggle */}
+                <button
+                  onClick={() => setIsDarkMode(!isDarkMode)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-extrabold text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-100 border border-slate-200 rounded-xl transition-all shadow-2xs cursor-pointer active:scale-95"
+                  title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                >
+                  <span>{isDarkMode ? '☀️' : '🌙'}</span>
+                  <span className="hidden sm:inline">{isDarkMode ? 'Light' : 'Dark'}</span>
+                </button>
+
+                {/* Focus Mode Toggle */}
+                <button
+                  onClick={() => setIsFocusMode(!isFocusMode)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-extrabold border rounded-xl transition-all shadow-2xs cursor-pointer active:scale-95 ${
+                    isFocusMode
+                      ? 'bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700'
+                      : 'text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-100 border-slate-200'
+                  }`}
+                  title={isFocusMode ? 'Exit Focus Mode' : 'Focus Mode — Hide Sidebar'}
+                >
+                  <span>{isFocusMode ? '⊠' : '⛶'}</span>
+                  <span className="hidden sm:inline">{isFocusMode ? 'Exit Focus' : 'Focus'}</span>
+                </button>
 
                 <button
                   onClick={handleLogout}
@@ -639,6 +740,69 @@ export default function Home() {
                       )}
                     </div>
                   </div>
+
+                  {/* 🔔 PENDING USER REGISTRATION REQUESTS (ADMIN ONLY) */}
+                  {user.isAdmin && (() => {
+                    const pendingUsers = dbUsers.filter((u: any) => u.status === 'PENDING');
+                    if (pendingUsers.length === 0) return null;
+                    return (
+                      <div className="bg-white rounded-3xl border border-amber-200 p-6 shadow-card-subtle">
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center font-black shadow-sm">
+                              <UserCheck size={20} />
+                            </div>
+                            <div>
+                              <h2 className="text-base font-black text-slate-900 flex items-center gap-2">
+                                Pending User Registrations
+                                <span className="inline-flex items-center justify-center w-5 h-5 text-[11px] font-black bg-amber-500 text-white rounded-full">
+                                  {pendingUsers.length}
+                                </span>
+                              </h2>
+                              <p className="text-xs text-slate-500">These users are waiting for your approval to login</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="space-y-3">
+                          {pendingUsers.map((u: any) => (
+                            <div key={u.id} className="flex items-center justify-between gap-3 p-4 bg-amber-50 border border-amber-200 rounded-2xl">
+                              <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-xl bg-amber-200 text-amber-800 flex items-center justify-center font-black text-sm shrink-0">
+                                  {u.name.charAt(0).toUpperCase()}
+                                </div>
+                                <div>
+                                  <div className="text-sm font-black text-slate-900">{u.name}</div>
+                                  <div className="text-xs text-slate-500 flex items-center gap-1.5 mt-0.5">
+                                    <Clock size={11} />
+                                    <span>Registered {new Date(u.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-2 shrink-0">
+                                <button
+                                  onClick={() => handleApproveUser(u.id, u.name, 'APPROVE')}
+                                  className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black rounded-xl shadow-sm transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
+                                >
+                                  <CheckCircle2 size={13} />
+                                  <span>Approve</span>
+                                </button>
+                                <button
+                                  onClick={() => handleApproveUser(u.id, u.name, 'REJECT')}
+                                  className="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 text-xs font-black rounded-xl transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
+                                >
+                                  <X size={13} />
+                                  <span>Reject</span>
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })()}
+
                 </div>
               )}
 
@@ -770,10 +934,36 @@ export default function Home() {
                             <option value="Canara Bank">Canara Bank</option>
                             <option value="Axis Bank">Axis Bank</option>
                             <option value="Indian Bank">Indian Bank</option>
+                            <option value="Karnataka Bank">Karnataka Bank</option>
                             <option value="Cash">Cash</option>
                           </select>
                         </div>
                       </div>
+                    </div>
+                  </div>
+
+                  {/* INSTANT LOCAL SEARCH BAR (ZERO SERVER LOAD) */}
+                  <div className="flex items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs">
+                    <div className="relative flex-1">
+                      <Search size={15} className="absolute inset-y-0 left-3 my-auto text-emerald-600" />
+                      <input
+                        type="text"
+                        value={localSearch}
+                        onChange={(e) => setLocalSearch(e.target.value)}
+                        placeholder="⚡ Type here for instant live search (Name, Bank, Remarks, Amount)..."
+                        className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500"
+                      />
+                      {localSearch && (
+                        <button
+                          onClick={() => setLocalSearch('')}
+                          className="absolute inset-y-0 right-3 my-auto text-xs text-slate-400 hover:text-slate-700 font-bold"
+                        >
+                          ✕ Clear
+                        </button>
+                      )}
+                    </div>
+                    <div className="text-xs font-bold text-slate-500 shrink-0 hidden sm:block">
+                      Showing <span className="text-emerald-600 font-black">{displayPayments.length}</span> of {payments.length} rows
                     </div>
                   </div>
 
@@ -789,19 +979,25 @@ export default function Home() {
                             <th className="py-3.5 px-4 border-r border-slate-800">Sender / User</th>
                             <th className="py-3.5 px-4 text-right border-r border-slate-800">Amount (₹)</th>
                             <th className="py-3.5 px-4 border-r border-slate-800">Bank to be Delivered</th>
+                            <th className="py-3.5 px-4 border-r border-slate-800">Remarks</th>
                             <th className="py-3.5 px-3 text-center w-36">Delete Control</th>
                           </tr>
                         </thead>
 
                         {/* Table Body (Excel rows) */}
                         <tbody className="divide-y divide-slate-200">
-                          {payments.map((p, index) => {
+                          {displayPayments.map((p, index) => {
                             const hasPendingRequest = p.deleteRequests && p.deleteRequests.length > 0;
+                            const isToday = p.date === todayStr;
                             return (
                               <tr
                                 key={p.id}
-                                className={`hover:bg-emerald-50/50 transition-colors ${
-                                  index % 2 === 0 ? 'bg-white' : 'bg-slate-50/70'
+                                className={`transition-colors ${
+                                  isToday
+                                    ? 'today-row bg-emerald-100/70 hover:bg-emerald-100 font-medium border-l-4 border-l-emerald-500'
+                                    : index % 2 === 0
+                                    ? 'bg-white hover:bg-emerald-50/50'
+                                    : 'bg-slate-50/70 hover:bg-emerald-50/50'
                                 }`}
                               >
                                 {/* Row Number */}
@@ -835,6 +1031,15 @@ export default function Home() {
                                     <Building2 size={13} className="text-slate-500" />
                                     <span>{p.targetBank}</span>
                                   </span>
+                                </td>
+
+                                {/* Remarks */}
+                                <td className="py-3.5 px-4 text-slate-600 border-r border-slate-200 text-sm max-w-[200px] min-w-[120px]">
+                                  {p.remarks ? (
+                                    <span className="italic text-slate-700 break-words whitespace-normal block">{p.remarks}</span>
+                                  ) : (
+                                    <span className="text-slate-300">—</span>
+                                  )}
                                 </td>
 
                                 {/* Actions: Admin can delete directly; Users can Request Delete */}
@@ -871,9 +1076,9 @@ export default function Home() {
                             );
                           })}
 
-                          {payments.length === 0 && !loadingPayments && (
+                          {displayPayments.length === 0 && !loadingPayments && (
                             <tr>
-                              <td colSpan={6} className="py-14 text-center text-slate-400 text-xs">
+                              <td colSpan={7} className="py-14 text-center text-slate-400 text-xs">
                                 <FileSpreadsheet size={36} className="mx-auto mb-2 opacity-30 text-emerald-600" />
                                 <p className="font-bold text-slate-700 text-sm mb-1">No payment entries matching filter</p>
                                 <p className="max-w-xs mx-auto mb-4">Try adjusting your date range, bank, or search name.</p>

@@ -15,7 +15,7 @@ interface AuthContextType {
   isLoading: boolean;
   authError: string | null;
   login: (name: string, password: string) => Promise<{ success: boolean; error?: string }>;
-  signup: (data: { name: string; password: string }) => Promise<{ success: boolean; error?: string }>;
+  signup: (data: { name: string; password: string }) => Promise<{ success: boolean; pending?: boolean; error?: string }>;
   logout: () => void;
   clearError: () => void;
 }
@@ -170,7 +170,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const signup = async (data: { name: string; password: string }): Promise<{ success: boolean; error?: string }> => {
+  const signup = async (data: { name: string; password: string }): Promise<{ success: boolean; pending?: boolean; error?: string }> => {
     setIsLoading(true);
     setAuthError(null);
 
@@ -190,17 +190,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return { success: false, error: errorMsg };
       }
 
-      const authUser: User = {
-        ...resData.user,
-        token: resData.token,
-      };
-
-      setUser(authUser);
-      localStorage.setItem('cvr_auth_user', JSON.stringify(authUser));
-      if (resData.token) {
-        localStorage.setItem('cvr_auth_token', resData.token);
+      // Registration pending — no token issued, user must wait for Admin approval
+      if (resData.pending) {
+        setIsLoading(false);
+        return { success: true, pending: true };
       }
-      recordActivity();
 
       setIsLoading(false);
       return { success: true };

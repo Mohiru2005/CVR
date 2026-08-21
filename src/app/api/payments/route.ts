@@ -90,7 +90,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { date, senderName, amount, targetBank, notes, createdByName } = body;
+    const { date, senderName, amount, targetBank, remarks, notes, createdByName } = body;
 
     if (!senderName || !amount || !targetBank) {
       return NextResponse.json(
@@ -115,6 +115,7 @@ export async function POST(request: Request) {
         senderName: senderName.trim(),
         amount: numAmount,
         targetBank: targetBank.trim(),
+        remarks: remarks ? remarks.trim() : null,
         notes: notes ? notes.trim() : null,
         createdByName: createdByName ? createdByName.trim() : 'Staff Member',
       },

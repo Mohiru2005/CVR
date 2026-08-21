@@ -17,6 +17,7 @@ const BANKS = [
   'Canara Bank',
   'Axis Bank',
   'Indian Bank',
+  'Karnataka Bank',
   'Cash',
 ];
 
@@ -33,6 +34,7 @@ export const AddPaymentModal: React.FC<AddPaymentModalProps> = ({
   const [date, setDate] = useState<string>(todayDate);
   const [amount, setAmount] = useState<string>('');
   const [targetBank, setTargetBank] = useState<string>('State Bank of India (SBI)');
+  const [remarks, setRemarks] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>('');
 
@@ -63,6 +65,7 @@ export const AddPaymentModal: React.FC<AddPaymentModalProps> = ({
           senderName: currentUserName,
           amount: parseFloat(amount),
           targetBank,
+          remarks: remarks.trim() || null,
           createdByName: currentUserName,
         }),
       });
@@ -78,6 +81,7 @@ export const AddPaymentModal: React.FC<AddPaymentModalProps> = ({
       // Reset and close
       setAmount('');
       setDate(todayDate);
+      setRemarks('');
       setIsLoading(false);
       onPaymentAdded();
       onClose();
@@ -204,6 +208,21 @@ export const AddPaymentModal: React.FC<AddPaymentModalProps> = ({
                 </option>
               ))}
             </select>
+          </div>
+
+          {/* 4. Remarks (Optional) */}
+          <div>
+            <label className="block text-xs font-extrabold text-slate-700 mb-1.5 flex items-center gap-1.5">
+              <span>💬</span>
+              <span>Remarks <span className="text-slate-400 font-normal">(Optional)</span></span>
+            </label>
+            <textarea
+              value={remarks}
+              onChange={(e) => setRemarks(e.target.value)}
+              placeholder="e.g. Commission payment, advance, adjustment..."
+              rows={2}
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 resize-none"
+            />
           </div>
 
           {/* Big High-Contrast Add Money Button */}

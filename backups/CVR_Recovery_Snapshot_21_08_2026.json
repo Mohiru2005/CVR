@@ -1,0 +1,18 @@
+{
+  "exportedAt": "2026-08-21T17:42:09.855Z",
+  "totalPayments": 1,
+  "payments": [
+    {
+      "id": "cmt37xv0z000013jkk6c00obx",
+      "date": "2026-08-21",
+      "senderName": "Admin",
+      "amount": 10000,
+      "targetBank": "State Bank of India (SBI)",
+      "remarks": "This is a remark",
+      "notes": null,
+      "createdByName": "Admin",
+      "createdAt": "2026-08-21T17:23:53.555Z",
+      "updatedAt": "2026-08-21T17:23:53.555Z"
+    }
+  ]
+}

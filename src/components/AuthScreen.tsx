@@ -10,7 +10,9 @@ import {
   AlertCircle, 
   LogIn, 
   UserPlus, 
-  ArrowLeft 
+  ArrowLeft,
+  Clock,
+  CheckCircle2
 } from 'lucide-react';
 
 interface AuthScreenProps {
@@ -30,11 +32,15 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
   const [loginPassword, setLoginPassword] = useState('');
   const [showLoginPassword, setShowLoginPassword] = useState(false);
 
-  // Register Form (Only Name, Password, Confirm Password)
+  // Register Form
   const [regName, setRegName] = useState('');
   const [regPassword, setRegPassword] = useState('');
   const [regConfirmPassword, setRegConfirmPassword] = useState('');
   const [showRegPassword, setShowRegPassword] = useState(false);
+
+  // After successful registration, show pending approval screen
+  const [registrationPending, setRegistrationPending] = useState(false);
+  const [pendingName, setPendingName] = useState('');
 
   const [localError, setLocalError] = useState('');
 
@@ -42,6 +48,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
     setTab(newTab);
     setLocalError('');
     clearError();
+    setRegistrationPending(false);
   };
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -91,6 +98,13 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
       password: regPassword,
     });
 
+    // If registration was submitted as PENDING (waiting admin approval)
+    if (res.success && res.pending) {
+      setPendingName(regName.trim());
+      setRegistrationPending(true);
+      return;
+    }
+
     if (!res.success && res.error) {
       setLocalError(res.error);
     }
@@ -98,6 +112,74 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
 
   const displayedError = localError || authError;
 
+  // ─── PENDING APPROVAL SCREEN ─────────────────────────────────────────────
+  if (registrationPending) {
+    return (
+      <div className="w-full max-w-md mx-auto px-4 animate-fade-in">
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-modal-clean overflow-hidden">
+          {/* Brand Header */}
+          <div className="pt-6 px-6 text-center">
+            <div className="w-12 h-12 rounded-xl bg-slate-900 text-white flex items-center justify-center mx-auto mb-2.5 shadow-md">
+              <span className="font-black text-sm">CVR</span>
+            </div>
+            <div className="flex items-center justify-center gap-1.5">
+              <h2 className="text-lg font-black tracking-tight text-slate-900">CVR AGENCIES</h2>
+              <span className="w-2 h-2 rounded-full bg-emerald-500 brand-dot-pulse" />
+            </div>
+            <p className="text-[11px] font-bold text-slate-400 tracking-wider uppercase">Pvt. Limited</p>
+          </div>
+
+          <div className="p-8 text-center">
+            {/* Pending Icon */}
+            <div className="w-20 h-20 rounded-full bg-amber-50 border-4 border-amber-200 flex items-center justify-center mx-auto mb-5">
+              <Clock size={36} className="text-amber-500" />
+            </div>
+
+            <h3 className="text-xl font-black text-slate-900 mb-2">
+              Request Sent! 🎉
+            </h3>
+
+            <div className="inline-flex items-center gap-2 bg-amber-50 border border-amber-200 px-4 py-2 rounded-xl mb-4">
+              <User size={14} className="text-amber-600 shrink-0" />
+              <span className="text-sm font-black text-amber-800">{pendingName}</span>
+            </div>
+
+            <p className="text-sm text-slate-600 leading-relaxed mb-2">
+              Your account registration request has been sent to the
+            </p>
+            <p className="text-base font-black text-slate-900 mb-4">
+              Master Admin for approval.
+            </p>
+
+            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 text-xs text-slate-500 text-left space-y-2 mb-6">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 size={14} className="text-emerald-500 shrink-0" />
+                <span>Your account has been created successfully.</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Clock size={14} className="text-amber-500 shrink-0" />
+                <span>Please wait for Admin to approve your account.</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <LogIn size={14} className="text-blue-500 shrink-0" />
+                <span>Once approved, you can login with your credentials.</span>
+              </div>
+            </div>
+
+            <button
+              onClick={() => switchTab('login')}
+              className="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
+            >
+              <LogIn size={16} />
+              <span>Go to Login</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ─── LOGIN & REGISTER FORM ────────────────────────────────────────────────
   return (
     <div className="w-full max-w-md mx-auto px-4 animate-fade-in">
       {/* Back to Welcome */}
@@ -117,14 +199,10 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
             <span className="font-black text-sm">CVR</span>
           </div>
           <div className="flex items-center justify-center gap-1.5">
-            <h2 className="text-lg font-black tracking-tight text-slate-900">
-              CVR AGENCIES
-            </h2>
+            <h2 className="text-lg font-black tracking-tight text-slate-900">CVR AGENCIES</h2>
             <span className="w-2 h-2 rounded-full bg-emerald-500 brand-dot-pulse" />
           </div>
-          <p className="text-[11px] font-bold text-slate-400 tracking-wider uppercase">
-            Pvt. Limited
-          </p>
+          <p className="text-[11px] font-bold text-slate-400 tracking-wider uppercase">Pvt. Limited</p>
         </div>
 
         {/* Tab Toggle */}
@@ -233,8 +311,13 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
               </button>
             </form>
           ) : (
-            /* REGISTER FORM: ONLY NAME, PASSWORD, CONFIRM PASSWORD */
+            /* REGISTER FORM */
             <form onSubmit={handleRegister} className="space-y-3.5">
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 font-semibold flex items-start gap-2">
+                <Clock size={14} className="shrink-0 mt-0.5 text-amber-600" />
+                <span>After registering, your account must be approved by Admin before you can login.</span>
+              </div>
+
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
                   Name
@@ -316,7 +399,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
                 ) : (
                   <>
                     <UserPlus size={16} />
-                    <span>Register</span>
+                    <span>Send Registration Request</span>
                   </>
                 )}
               </button>
