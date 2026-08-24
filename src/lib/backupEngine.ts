@@ -30,6 +30,7 @@ function createExcelBuffer(payments: any[], title: string): Buffer {
     'Sender / User Name': p.senderName || '',
     'Amount (INR)': Number(p.amount || 0),
     'Bank to be Delivered': p.targetBank || '',
+    'Remarks': p.remarks || '',
     'Recorded By': p.createdByName || '',
   }));
 
@@ -40,6 +41,7 @@ function createExcelBuffer(payments: any[], title: string): Buffer {
     'Sender / User Name': 'Total Collection',
     'Amount (INR)': totalAmt,
     'Bank to be Delivered': '',
+    'Remarks': '',
     'Recorded By': '',
   });
 
@@ -50,6 +52,7 @@ function createExcelBuffer(payments: any[], title: string): Buffer {
     { wch: 26 },
     { wch: 18 },
     { wch: 32 },
+    { wch: 30 },
     { wch: 22 },
   ];
 

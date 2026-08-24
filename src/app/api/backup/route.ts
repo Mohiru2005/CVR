@@ -117,7 +117,8 @@ export async function PUT(request: Request) {
             senderName: p.senderName,
             amount: p.amount,
             targetBank: p.targetBank,
-            notes: p.notes,
+            remarks: p.remarks || null,
+            notes: p.notes || null,
             createdByName: p.createdByName,
           },
           create: {
@@ -126,7 +127,8 @@ export async function PUT(request: Request) {
             senderName: p.senderName,
             amount: p.amount,
             targetBank: p.targetBank,
-            notes: p.notes,
+            remarks: p.remarks || null,
+            notes: p.notes || null,
             createdByName: p.createdByName,
           },
         });
@@ -152,6 +154,7 @@ export async function PUT(request: Request) {
         const sender = String(r['Sender / User Name'] || 'Recovered User');
         const amount = parseFloat(r['Amount (INR)']) || 0;
         const bank = String(r['Bank to be Delivered'] || 'State Bank of India (SBI)');
+        const remarks = String(r['Remarks'] || '');
         const recordedBy = String(r['Recorded By'] || 'System Recovery');
 
         if (amount > 0) {
@@ -172,6 +175,7 @@ export async function PUT(request: Request) {
                 senderName: sender,
                 amount,
                 targetBank: bank,
+                remarks: remarks ? remarks.trim() : null,
                 createdByName: recordedBy,
               },
             });
