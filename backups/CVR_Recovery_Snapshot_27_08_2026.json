@@ -1,0 +1,18 @@
+{
+  "exportedAt": "2026-08-27T06:01:50.407Z",
+  "totalPayments": 1,
+  "payments": [
+    {
+      "id": "cmtb47thg0001i767njt1d2hw",
+      "date": "2026-08-27",
+      "senderName": "QA_User_1787810507313",
+      "amount": 7500,
+      "targetBank": "Karnataka Bank",
+      "remarks": "QA Test Payment Remark",
+      "notes": null,
+      "createdByName": "QA_User_1787810507313",
+      "createdAt": "2026-08-27T06:01:49.061Z",
+      "updatedAt": "2026-08-27T06:01:49.061Z"
+    }
+  ]
+}
