@@ -61,7 +61,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
 
         {/* 📲 Direct APK Download Button */}
         <a
-          href="/CVR_Agencies.apk"
+          href="/api/download-apk"
           download="CVR_Agencies.apk"
           className="w-full sm:w-88 py-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs rounded-xl border border-emerald-200 transition-all flex items-center justify-center gap-2 active:scale-[0.98] cursor-pointer"
         >

@@ -155,7 +155,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* 📲 APK Download Link at Bottom of Sidebar */}
         <div className="p-3 border-t border-slate-100">
           <a
-            href="/CVR_Agencies.apk"
+            href="/api/download-apk"
             download="CVR_Agencies.apk"
             className="w-full flex items-center justify-between px-3 py-2.5 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-xl text-xs font-bold text-emerald-800 transition-all cursor-pointer"
           >
