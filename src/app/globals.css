@@ -79,7 +79,7 @@ body {
 
 html.dark,
 html.dark body {
-  background-color: #000000 !important;
+  background-color: #0f172a !important;
   color: #e2e8f0 !important;
   background-image: none !important;
 }
@@ -90,13 +90,13 @@ html.dark ::-webkit-scrollbar-thumb {
 
 /* Cards and panels */
 html.dark .bg-white {
-  background-color: #121826 !important;
-  border-color: #1e293b !important;
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
 }
 
 html.dark .bg-slate-50,
 html.dark .bg-\[#f8fafc\] {
-  background-color: #000000 !important;
+  background-color: #0f172a !important;
 }
 
 html.dark .bg-slate-100 {
@@ -108,12 +108,12 @@ html.dark .bg-slate-200 {
 }
 
 /* Text colors */
-html.dark .text-slate-900 { color: #ffffff !important; }
-html.dark .text-slate-800 { color: #f8fafc !important; }
-html.dark .text-slate-700 { color: #f1f5f9 !important; }
-html.dark .text-slate-600 { color: #cbd5e1 !important; }
-html.dark .text-slate-500 { color: #94a3b8 !important; }
-html.dark .text-slate-400 { color: #94a3b8 !important; }
+html.dark .text-slate-900 { color: #f1f5f9 !important; }
+html.dark .text-slate-800 { color: #e2e8f0 !important; }
+html.dark .text-slate-700 { color: #cbd5e1 !important; }
+html.dark .text-slate-600 { color: #94a3b8 !important; }
+html.dark .text-slate-500 { color: #64748b !important; }
+html.dark .text-slate-400 { color: #475569 !important; }
 
 /* Borders */
 html.dark .border-slate-200 { border-color: #334155 !important; }

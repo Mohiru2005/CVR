@@ -27,7 +27,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
 
       {/* Headline */}
       <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-slate-900 leading-[1.15]">
-        WELCOME TO <span className="bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-400 bg-clip-text text-transparent">CVR</span> AGENCIES
+        WELCOME TO <span className="bg-gradient-to-r from-emerald-600 to-teal-700 bg-clip-text text-transparent">CVR</span> AGENCIES
       </h1>
       <p className="text-xs sm:text-sm font-bold tracking-widest text-slate-400 uppercase mt-1">
         Private Limited
