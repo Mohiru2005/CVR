@@ -79,7 +79,7 @@ body {
 
 html.dark,
 html.dark body {
-  background-color: #0f172a !important;
+  background-color: #000000 !important;
   color: #e2e8f0 !important;
   background-image: none !important;
 }
@@ -90,13 +90,13 @@ html.dark ::-webkit-scrollbar-thumb {
 
 /* Cards and panels */
 html.dark .bg-white {
-  background-color: #1e293b !important;
-  border-color: #334155 !important;
+  background-color: #121826 !important;
+  border-color: #1e293b !important;
 }
 
 html.dark .bg-slate-50,
 html.dark .bg-\[#f8fafc\] {
-  background-color: #0f172a !important;
+  background-color: #000000 !important;
 }
 
 html.dark .bg-slate-100 {

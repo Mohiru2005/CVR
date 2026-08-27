@@ -503,7 +503,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8fafc]">
+    <div className="min-h-screen bg-[#f8fafc] dark:bg-black transition-colors duration-300">
       {user ? (
         /* LOGGED IN LAYOUT WITH LEFT SIDEBAR */
         <div className={`min-h-screen flex w-full max-w-full overflow-x-hidden ${isFocusMode ? 'focus-mode-active' : ''}`}>
