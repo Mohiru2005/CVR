@@ -39,23 +39,35 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
       </p>
 
       {/* Action Buttons */}
-      <div className="mt-8 flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
-        <button
-          onClick={onGoToLogin}
-          className="w-full sm:w-44 py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 active:scale-[0.98] cursor-pointer"
-        >
-          <LogIn size={16} />
-          <span>Login</span>
-          <ArrowRight size={15} />
-        </button>
+      <div className="mt-8 flex flex-col items-center gap-3 w-full sm:w-auto">
+        <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+          <button
+            onClick={onGoToLogin}
+            className="w-full sm:w-44 py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 active:scale-[0.98] cursor-pointer"
+          >
+            <LogIn size={16} />
+            <span>Login</span>
+            <ArrowRight size={15} />
+          </button>
 
-        <button
-          onClick={onGoToRegister}
-          className="w-full sm:w-44 py-3.5 bg-white hover:bg-slate-50 text-slate-800 font-bold text-sm rounded-xl border border-slate-300 shadow-xs hover:shadow transition-all flex items-center justify-center gap-2 active:scale-[0.98] cursor-pointer"
+          <button
+            onClick={onGoToRegister}
+            className="w-full sm:w-44 py-3.5 bg-white hover:bg-slate-50 text-slate-800 font-bold text-sm rounded-xl border border-slate-300 shadow-xs hover:shadow transition-all flex items-center justify-center gap-2 active:scale-[0.98] cursor-pointer"
+          >
+            <UserPlus size={16} className="text-emerald-600" />
+            <span>Register</span>
+          </button>
+        </div>
+
+        {/* 📲 Direct APK Download Button */}
+        <a
+          href="/CVR_Agencies.apk"
+          download="CVR_Agencies.apk"
+          className="w-full sm:w-88 py-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs rounded-xl border border-emerald-200 transition-all flex items-center justify-center gap-2 active:scale-[0.98] cursor-pointer"
         >
-          <UserPlus size={16} className="text-emerald-600" />
-          <span>Register</span>
-        </button>
+          <span>📲</span>
+          <span>Download Android App (.apk)</span>
+        </a>
       </div>
 
       <div className="mt-12 flex items-center gap-1.5 text-xs text-slate-400">

@@ -151,6 +151,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
             );
           })}
         </div>
+
+        {/* 📲 APK Download Link at Bottom of Sidebar */}
+        <div className="p-3 border-t border-slate-100">
+          <a
+            href="/CVR_Agencies.apk"
+            download="CVR_Agencies.apk"
+            className="w-full flex items-center justify-between px-3 py-2.5 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-xl text-xs font-bold text-emerald-800 transition-all cursor-pointer"
+          >
+            <div className="flex items-center gap-2">
+              <span>📲</span>
+              <span>Download Android App</span>
+            </div>
+            <span className="text-[10px] font-extrabold bg-emerald-600 text-white px-2 py-0.5 rounded-md">.APK</span>
+          </a>
+        </div>
       </aside>
     </>
   );
