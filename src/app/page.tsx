@@ -503,7 +503,7 @@ export default function Home() {
     <div className="min-h-screen bg-[#f8fafc]">
       {user ? (
         /* LOGGED IN LAYOUT WITH LEFT SIDEBAR */
-        <div className={`min-h-screen flex ${isFocusMode ? 'focus-mode-active' : ''}`}>
+        <div className={`min-h-screen flex w-full max-w-full overflow-x-hidden ${isFocusMode ? 'focus-mode-active' : ''}`}>
           {/* Left Sidebar */}
           <div className="sidebar-panel">
             <Sidebar
@@ -516,44 +516,44 @@ export default function Home() {
           </div>
 
           {/* Main Workspace Area */}
-          <div className={`flex-1 flex flex-col min-h-screen ${isFocusMode ? '' : 'lg:pl-72'}`}>
+          <div className={`flex-1 flex flex-col min-h-screen w-full max-w-full overflow-x-hidden ${isFocusMode ? '' : 'lg:pl-72'}`}>
             {/* Top Bar with Top-Right Logout */}
-            <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/80 px-4 sm:px-6 h-16 flex items-center justify-between">
+            <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/80 px-2.5 sm:px-6 h-16 flex items-center justify-between w-full max-w-full overflow-x-hidden">
               {/* Left Title & Mobile Menu Toggle */}
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1.5 sm:gap-3 min-w-0">
                 <button
                   onClick={() => setSidebarOpen(true)}
-                  className="p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 lg:hidden cursor-pointer"
+                  className="p-1.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 lg:hidden cursor-pointer shrink-0"
                   aria-label="Open sidebar"
                 >
                   <Menu size={20} />
                 </button>
 
-                <div className="flex items-center gap-2">
-                  <span className="font-black text-slate-900 text-base sm:text-lg capitalize">
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <span className="font-black text-slate-900 text-xs sm:text-base capitalize truncate max-w-[120px] min-[380px]:max-w-[170px] sm:max-w-none">
                     {activeTab === 'data' 
-                      ? 'Payment Ledger (Excel Sheet)' 
+                      ? 'Payment Ledger' 
                       : activeTab === 'requests' 
                       ? 'Delete Requests' 
                       : activeTab === 'recovery' 
-                      ? 'Backup & Data Recovery' 
-                      : 'Dashboard Overview'}
+                      ? 'Data Recovery' 
+                      : 'Dashboard'}
                   </span>
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 brand-dot-pulse" />
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 brand-dot-pulse shrink-0" />
                 </div>
               </div>
 
               {/* TOP RIGHT: Add Money + User Pill + Log Out Button */}
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
                 <button
                   onClick={() => setIsAddPaymentOpen(true)}
-                  className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-black text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition-all shadow-md cursor-pointer active:scale-95"
+                  className="flex items-center gap-1 px-2.5 sm:px-3.5 py-1.5 sm:py-2 text-xs font-black text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition-all shadow-md cursor-pointer active:scale-95"
                 >
                   <PlusCircle size={15} />
-                  <span>Add Money</span>
+                  <span className="hidden min-[380px]:inline">Add Money</span>
                 </button>
 
-                <div className="hidden sm:flex items-center gap-2 bg-slate-100 border border-slate-200/80 px-3 py-1.5 rounded-full">
+                <div className="hidden md:flex items-center gap-2 bg-slate-100 border border-slate-200/80 px-3 py-1.5 rounded-full">
                   <div className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs ${
                     user.isAdmin ? 'bg-slate-900 text-emerald-400' : 'bg-emerald-600 text-white'
                   }`}>
@@ -567,7 +567,7 @@ export default function Home() {
                 {/* Dark Mode Toggle */}
                 <button
                   onClick={() => setIsDarkMode(!isDarkMode)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-extrabold text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-100 border border-slate-200 rounded-xl transition-all shadow-2xs cursor-pointer active:scale-95"
+                  className="flex items-center gap-1 px-2 sm:px-3 py-1.5 text-xs font-extrabold text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-100 border border-slate-200 rounded-xl transition-all shadow-2xs cursor-pointer active:scale-95"
                   title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
                 >
                   <span>{isDarkMode ? '☀️' : '🌙'}</span>
@@ -577,7 +577,7 @@ export default function Home() {
                 {/* Focus Mode Toggle */}
                 <button
                   onClick={() => setIsFocusMode(!isFocusMode)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-extrabold border rounded-xl transition-all shadow-2xs cursor-pointer active:scale-95 ${
+                  className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs font-extrabold border rounded-xl transition-all shadow-2xs cursor-pointer active:scale-95 ${
                     isFocusMode
                       ? 'bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700'
                       : 'text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-100 border-slate-200'
@@ -585,12 +585,12 @@ export default function Home() {
                   title={isFocusMode ? 'Exit Focus Mode' : 'Focus Mode — Hide Sidebar'}
                 >
                   <span>{isFocusMode ? '⊠' : '⛶'}</span>
-                  <span className="hidden sm:inline">{isFocusMode ? 'Exit Focus' : 'Focus'}</span>
+                  <span>{isFocusMode ? 'Exit Focus' : 'Focus'}</span>
                 </button>
 
                 <button
                   onClick={handleLogout}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-extrabold text-slate-600 hover:text-red-600 bg-white hover:bg-red-50 border border-slate-200 hover:border-red-200 rounded-xl transition-all shadow-2xs cursor-pointer active:scale-95"
+                  className="flex items-center gap-1 px-2 sm:px-3 py-1.5 text-xs font-extrabold text-slate-600 hover:text-red-600 bg-white hover:bg-red-50 border border-slate-200 hover:border-red-200 rounded-xl transition-all shadow-2xs cursor-pointer active:scale-95"
                   title="Sign Out"
                 >
                   <LogOut size={14} />
