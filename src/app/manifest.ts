@@ -7,6 +7,9 @@ export default function manifest(): MetadataRoute.Manifest {
     description: 'CVR Agencies Mobile Enterprise Portal',
     start_url: '/',
     display: 'standalone',
+    orientation: 'any',
+    dir: 'ltr',
+    lang: 'en',
     background_color: '#0f172a',
     theme_color: '#0f172a',
     icons: [
