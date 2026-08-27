@@ -191,7 +191,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
       <div className="flex items-center justify-between mb-5">
         <button
           onClick={onBack}
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-900 transition-colors group"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors group"
         >
           <ArrowLeft size={16} className="transition-transform group-hover:-translate-x-1" />
           <span>Back to Welcome</span>
@@ -200,7 +200,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
         {onToggleDarkMode && (
           <button
             onClick={onToggleDarkMode}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-extrabold text-slate-700 hover:text-slate-900 bg-white hover:bg-slate-100 border border-slate-200 rounded-xl transition-all shadow-2xs cursor-pointer active:scale-95"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-extrabold text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-xl transition-all shadow-2xs cursor-pointer active:scale-95"
             title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
           >
             <span>{isDarkMode ? '☀️' : '🌙'}</span>
@@ -210,17 +210,17 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
       </div>
 
       {/* Auth Card */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-modal-clean overflow-hidden">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-modal-clean overflow-hidden">
         {/* Brand Header Inside Card */}
         <div className="pt-6 px-6 text-center">
           <div className="w-12 h-12 rounded-xl bg-slate-900 text-white flex items-center justify-center mx-auto mb-2.5 shadow-md">
             <span className="font-black text-sm">CVR</span>
           </div>
           <div className="flex items-center justify-center gap-1.5">
-            <h2 className="text-lg font-black tracking-tight text-slate-900">CVR AGENCIES</h2>
+            <h2 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">CVR AGENCIES</h2>
             <span className="w-2 h-2 rounded-full bg-emerald-500 brand-dot-pulse" />
           </div>
-          <p className="text-[11px] font-bold text-slate-400 tracking-wider uppercase">Pvt. Limited</p>
+          <p className="text-[11px] font-bold text-slate-400 dark:text-slate-400 tracking-wider uppercase">Pvt. Limited</p>
         </div>
 
         {/* Tab Toggle */}
