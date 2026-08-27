@@ -29,5 +29,21 @@ export default function manifest(): MetadataRoute.Manifest {
         purpose: 'maskable',
       },
     ],
+    screenshots: [
+      {
+        src: '/icon-512.png',
+        sizes: '512x512',
+        type: 'image/png',
+        form_factor: 'wide',
+        label: 'CVR Agencies Desktop Portal',
+      },
+      {
+        src: '/icon-512.png',
+        sizes: '512x512',
+        type: 'image/png',
+        form_factor: 'narrow',
+        label: 'CVR Agencies Mobile App',
+      },
+    ],
   };
 }
