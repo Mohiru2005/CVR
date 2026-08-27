@@ -1502,8 +1502,6 @@ export default function Home() {
           <WelcomeScreen
             onGoToLogin={() => setCurrentView('login')}
             onGoToRegister={() => setCurrentView('register')}
-            isDarkMode={isDarkMode}
-            onToggleDarkMode={() => setIsDarkMode(!isDarkMode)}
           />
           <footer className="py-3 text-center text-slate-400 text-xs font-bold">
             © 2026 CVR Agencies Pvt. Ltd.
@@ -1515,8 +1513,6 @@ export default function Home() {
           <AuthScreen
             initialTab={currentView === 'register' ? 'register' : 'login'}
             onBack={() => setCurrentView('welcome')}
-            isDarkMode={isDarkMode}
-            onToggleDarkMode={() => setIsDarkMode(!isDarkMode)}
           />
           <footer className="py-3 text-center text-slate-400 text-xs font-bold">
             © 2026 CVR Agencies Pvt. Ltd.
