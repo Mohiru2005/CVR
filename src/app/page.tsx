@@ -101,24 +101,25 @@ export default function Home() {
 
   useEffect(() => {
     setMounted(true);
-    // Restore dark mode preference from localStorage
+    // Restore dark mode preference from localStorage if logged in
     const saved = localStorage.getItem('cvr_dark_mode');
     if (saved === 'true') {
       setIsDarkMode(true);
-      document.documentElement.classList.add('dark');
     }
   }, []);
 
-  // Apply dark mode class to <html> whenever it changes
+  // Apply dark mode class to <html> ONLY when user is logged in
   useEffect(() => {
-    if (isDarkMode) {
+    if (user && isDarkMode) {
       document.documentElement.classList.add('dark');
       localStorage.setItem('cvr_dark_mode', 'true');
     } else {
       document.documentElement.classList.remove('dark');
-      localStorage.setItem('cvr_dark_mode', 'false');
+      if (!user) {
+        setIsDarkMode(false);
+      }
     }
-  }, [isDarkMode]);
+  }, [isDarkMode, user]);
 
   // Always reset active tab to 'data' upon login
   useEffect(() => {
@@ -503,7 +504,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] dark:bg-black transition-colors duration-300">
+    <div className="min-h-screen bg-[#f8fafc] transition-colors duration-300">
       {user ? (
         /* LOGGED IN LAYOUT WITH LEFT SIDEBAR */
         <div className={`min-h-screen flex w-full max-w-full overflow-x-hidden ${isFocusMode ? 'focus-mode-active' : ''}`}>
