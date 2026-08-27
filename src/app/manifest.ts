@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
+    id: '/',
     name: 'CVR Agencies Pvt. Ltd.',
     short_name: 'CVR Agencies',
     description: 'CVR Agencies Mobile Enterprise Portal',
