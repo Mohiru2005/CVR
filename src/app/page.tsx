@@ -93,6 +93,9 @@ export default function Home() {
   // Local search (filters already-loaded payments, no API call)
   const [localSearch, setLocalSearch] = useState<string>('');
 
+  // Filter panel collapsible state (Hidden by default, tap to expand)
+  const [showFilterPanel, setShowFilterPanel] = useState<boolean>(false);
+
   // Today's date string for row highlighting
   const todayStr = new Date().toISOString().split('T')[0];
 
@@ -855,13 +858,32 @@ export default function Home() {
                       </div>
                     </div>
 
-                    {/* 🎯 3 CORE FILTER CONTROLS: NAME, DATE RANGE (FROM - TO), BANK */}
+                    {/* 🎯 CORE FILTER CONTROLS (COLLAPSIBLE - TAP TO SHOW) */}
                     <div className="pt-3.5 border-t border-slate-100 space-y-3">
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-1.5 text-xs font-black text-slate-700 uppercase tracking-wider">
-                          <Filter size={14} className="text-emerald-600" />
+                        <button
+                          type="button"
+                          onClick={() => setShowFilterPanel(!showFilterPanel)}
+                          className="flex items-center gap-2 text-xs font-black text-slate-700 hover:text-slate-900 uppercase tracking-wider cursor-pointer group"
+                        >
+                          <div className={`p-1.5 rounded-lg border transition-colors ${
+                            isFilterActive 
+                              ? 'bg-emerald-600 text-white border-emerald-600' 
+                              : 'bg-slate-100 text-slate-600 border-slate-200 group-hover:bg-slate-200'
+                          }`}>
+                            <Filter size={13} />
+                          </div>
                           <span>Filter Options</span>
-                        </div>
+                          {isFilterActive && (
+                            <span className="px-2 py-0.5 text-[10px] font-black rounded-full bg-emerald-600 text-white">
+                              Active
+                            </span>
+                          )}
+                          <span className="text-slate-400 font-normal text-[11px] ml-1">
+                            ({showFilterPanel ? 'Tap to hide' : 'Tap to show'})
+                          </span>
+                        </button>
+
                         {isFilterActive && (
                           <button
                             onClick={handleResetFilters}
@@ -873,72 +895,75 @@ export default function Home() {
                         )}
                       </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-                        {/* 1. FILTER BY NAME */}
-                        <div>
-                          <label className="block text-[11px] font-extrabold text-slate-500 mb-1">
-                            1. Search Name / User
-                          </label>
-                          <div className="relative">
-                            <Search size={14} className="absolute inset-y-0 left-3 my-auto text-slate-400" />
+                      {/* Filter Inputs Grid (Only shown when user taps Filter Options) */}
+                      {showFilterPanel && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 pt-2 animate-fade-in">
+                          {/* 1. FILTER BY NAME */}
+                          <div>
+                            <label className="block text-[11px] font-extrabold text-slate-500 mb-1">
+                              1. Search Name / User
+                            </label>
+                            <div className="relative">
+                              <Search size={14} className="absolute inset-y-0 left-3 my-auto text-slate-400" />
+                              <input
+                                type="text"
+                                value={searchName}
+                                onChange={(e) => setSearchName(e.target.value)}
+                                placeholder="e.g. Admin, Ramesh..."
+                                className="w-full pl-8 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500"
+                              />
+                            </div>
+                          </div>
+
+                          {/* 2. FILTER FROM DATE */}
+                          <div>
+                            <label className="block text-[11px] font-extrabold text-slate-500 mb-1">
+                              2. From Date
+                            </label>
                             <input
-                              type="text"
-                              value={searchName}
-                              onChange={(e) => setSearchName(e.target.value)}
-                              placeholder="e.g. Admin, Ramesh..."
-                              className="w-full pl-8 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500"
+                              type="date"
+                              value={fromDate}
+                              onChange={(e) => setFromDate(e.target.value)}
+                              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500"
                             />
                           </div>
-                        </div>
 
-                        {/* 2. FILTER FROM DATE */}
-                        <div>
-                          <label className="block text-[11px] font-extrabold text-slate-500 mb-1">
-                            2. From Date
-                          </label>
-                          <input
-                            type="date"
-                            value={fromDate}
-                            onChange={(e) => setFromDate(e.target.value)}
-                            className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500"
-                          />
-                        </div>
+                          {/* 3. FILTER TO DATE */}
+                          <div>
+                            <label className="block text-[11px] font-extrabold text-slate-500 mb-1">
+                              3. To Date
+                            </label>
+                            <input
+                              type="date"
+                              value={toDate}
+                              onChange={(e) => setToDate(e.target.value)}
+                              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500"
+                            />
+                          </div>
 
-                        {/* 3. FILTER TO DATE */}
-                        <div>
-                          <label className="block text-[11px] font-extrabold text-slate-500 mb-1">
-                            3. To Date
-                          </label>
-                          <input
-                            type="date"
-                            value={toDate}
-                            onChange={(e) => setToDate(e.target.value)}
-                            className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500"
-                          />
+                          {/* 4. FILTER BY BANK */}
+                          <div>
+                            <label className="block text-[11px] font-extrabold text-slate-500 mb-1">
+                              4. Bank Account
+                            </label>
+                            <select
+                              value={selectedBankFilter}
+                              onChange={(e) => setSelectedBankFilter(e.target.value)}
+                              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 cursor-pointer"
+                            >
+                              <option value="ALL">All Banks</option>
+                              <option value="State Bank of India (SBI)">State Bank of India (SBI)</option>
+                              <option value="HDFC Bank">HDFC Bank</option>
+                              <option value="ICICI Bank">ICICI Bank</option>
+                              <option value="Canara Bank">Canara Bank</option>
+                              <option value="Axis Bank">Axis Bank</option>
+                              <option value="Indian Bank">Indian Bank</option>
+                              <option value="Karnataka Bank">Karnataka Bank</option>
+                              <option value="Cash">Cash</option>
+                            </select>
+                          </div>
                         </div>
-
-                        {/* 4. FILTER BY BANK */}
-                        <div>
-                          <label className="block text-[11px] font-extrabold text-slate-500 mb-1">
-                            4. Bank Account
-                          </label>
-                          <select
-                            value={selectedBankFilter}
-                            onChange={(e) => setSelectedBankFilter(e.target.value)}
-                            className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 cursor-pointer"
-                          >
-                            <option value="ALL">All Banks</option>
-                            <option value="State Bank of India (SBI)">State Bank of India (SBI)</option>
-                            <option value="HDFC Bank">HDFC Bank</option>
-                            <option value="ICICI Bank">ICICI Bank</option>
-                            <option value="Canara Bank">Canara Bank</option>
-                            <option value="Axis Bank">Axis Bank</option>
-                            <option value="Indian Bank">Indian Bank</option>
-                            <option value="Karnataka Bank">Karnataka Bank</option>
-                            <option value="Cash">Cash</option>
-                          </select>
-                        </div>
-                      </div>
+                      )}
                     </div>
                   </div>
 
